@@ -48,13 +48,13 @@ const PokemonApp = () => {
         style={styles.picker}
         onValueChange={(itemValue) => setSelectedType(itemValue)}
       >
-        <Picker.Item label="All Types" value="" />
+        <Picker.Item label="Todos os Tipos" value="" />
         {types.map((type) => (
           <Picker.Item key={type.name} label={type.name} value={type.name} />
         ))}
       </Picker>
 
-      <Button title="Filter" onPress={filterPokemonsByType} />
+      <Button title="Filtrar" onPress={filterPokemonsByType} />
 
       <FlatList
         data={filteredPokemons}
@@ -63,7 +63,7 @@ const PokemonApp = () => {
       />
 
       <View style={styles.buttonContainer}>
-        <Button title="Show More" onPress={() => setLimit((prev) => prev + 10)} />
+        <Button title="Mostrar Mais" onPress={() => setLimit((prev) => prev + 10)} />
       </View>
     </View>
   );
