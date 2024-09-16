@@ -1,72 +1,99 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { Picker } from "@react-native-picker/picker";
+import React, { useState, useEffect } from 'react';
+import { View, Text, FlatList, StyleSheet, Picker, Button } from 'react-native';
 
-const style = StyleSheet.create({
-    container: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        flex: '1',
-    },
-    title: {
-        fontSize: 30,
-        textAlign: 'center',
-        margin: 20,
-        fontFamily: 'Open Sans',
-        fontWeight: '800',
-    },
-    box:{
-        shadowOpacity: 0.25,  
-        shadowRadius: 8.84, 
-       padding: 50
-    },
-    picker:{
-      borderRadius:15,
-      color:'gray',
-    },
-    final:{
-        fontSize: 20,
-        textAlign: 'center',
-        margin: 20,
-        fontFamily: 'Open Sans',
-        fontWeight: '800',   
+const PokemonApp = () => {
+  const [pokemons, setPokemons] = useState([]);
+  const [types, setTypes] = useState([]);
+  const [selectedType, setSelectedType] = useState('');
+  const [limit, setLimit] = useState(10);
+  const [filteredPokemons, setFilteredPokemons] = useState([]);
+
+  useEffect(() => {
+    fetch(`https://pokeapi.co/api/v2/pokemon?limit=${limit}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setPokemons(data.results);
+        setFilteredPokemons(data.results);
+      })
+      .catch((error) => console.error(error));
+
+    fetch('https://pokeapi.co/api/v2/type')
+      .then((response) => response.json())
+      .then((data) => setTypes(data.results))
+      .catch((error) => console.error(error));
+  }, [limit]);
+
+  const filterPokemonsByType = () => {
+    if (selectedType === '') {
+      setFilteredPokemons(pokemons);
+    } else {
+      fetch(`https://pokeapi.co/api/v2/type/${selectedType}`)
+        .then((response) => response.json())
+        .then((data) => {
+          const filtered = pokemons.filter((pokemon) =>
+            data.pokemon.some((p) => p.pokemon.name === pokemon.name)
+          );
+          setFilteredPokemons(filtered);
+        })
+        .catch((error) => console.error(error));
     }
+  };
 
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Lista de Pokémons</Text>
+
+      <Picker
+        selectedValue={selectedType}
+        style={styles.picker}
+        onValueChange={(itemValue) => setSelectedType(itemValue)}
+      >
+        <Picker.Item label="All Types" value="" />
+        {types.map((type) => (
+          <Picker.Item key={type.name} label={type.name} value={type.name} />
+        ))}
+      </Picker>
+
+      <Button title="Filter" onPress={filterPokemonsByType} />
+
+      <FlatList
+        data={filteredPokemons}
+        keyExtractor={(item) => item.name}
+        renderItem={({ item }) => <Text style={styles.item}>{item.name}</Text>}
+      />
+
+      <View style={styles.buttonContainer}>
+        <Button title="Show More" onPress={() => setLimit((prev) => prev + 10)} />
+      </View>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+    backgroundColor: '#fff',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  picker: {
+    height: 50,
+    width: '100%',
+    marginBottom: 10,
+  },
+  item: {
+    padding: 10,
+    fontSize: 18,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  buttonContainer: {
+    marginTop: 10,
+  },
 });
 
-export default Seletor = () => {
-    const [pokemon, setPokemon] = useState('');
-    const [lista_pokemon, setListaPokemon] = useState([])
-
-    ///const lista_pokemon = [
-    // {nome:'Pikachu', value: 'pikachu'},
-    //{nome:'Bulbasaur', value: 'Bulbasaur'},
-    // {nome:'Charmander', value: 'charmander'},
-    // {nome:'Squirtle', value: 'squirtle'}
-    // ];
-    useEffect(() => {
-        fetch(' https://pokeapi.co/api/v2/pokemon?limit=100')
-            .then(response => response.json())
-            .then(dados => setListaPokemon(dados.results))
-    }, [])
-    console.log('fora')
-
-    return (
-        <View style={style.container}>
-            <View style = {style.box}>
-            <Text style={style.title}>Selecione um Pokemon</Text>
-            <Picker
-                selectedValue={pokemon}
-                style={style.picker}
-                onValueChange={(itemValue) => setPokemon(itemValue)}
-            >
-                <Picker.Item label="Selecione um Pokemon" />
-                {lista_pokemon.map((item, index) => (
-                    <Picker.Item key={index} label={item.name} value={item.url} />
-                ))}
-            </Picker>
-            {pokemon ? <Text style={style.final}>Voce selecionou {pokemon}</Text> : ''}
-            </View>
-        </View>
-    );
-};
+export default PokemonApp;
