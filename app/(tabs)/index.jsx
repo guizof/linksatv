@@ -11,6 +11,7 @@ export default function Page() {
             <Link href="/calculadorabonita" style={styles.link}>- Calculadora</Link>
             <Link href="/pokemon" style={styles.link}>- Pokémon</Link>
             <Link href="/teladelogin" style={styles.link}>- Tela Login</Link>
+            <Link href="/ifome" style={styles.link}>- Ifome</Link>
             </View>
         </View>
     );
