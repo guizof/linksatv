@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
         padding: 10
     },
     link: {
-        backgroundColor: '#ff0000',
+        backgroundColor: 'black',
         paddingVertical: 5,
         paddingHorizontal: 10,
         borderRadius: 5,
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     buy: {
-        backgroundColor: '#ff0000',
+        backgroundColor: 'black',
         paddingVertical: 10,
         paddingHorizontal: 15,
         borderRadius: 5,

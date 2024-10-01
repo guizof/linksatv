@@ -15,7 +15,7 @@ const Header = ({ link, header }) => {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#ff0000',
+        backgroundColor: 'gray',
         flexDirection: 'row',
         display: 'flex',
         justifyContent: 'space-between',
