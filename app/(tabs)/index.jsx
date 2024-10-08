@@ -12,6 +12,7 @@ export default function Page() {
             <Link href="/pokemon" style={styles.link}>- Pokémon</Link>
             <Link href="/teladelogin" style={styles.link}>- Tela Login</Link>
             <Link href="/ifome" style={styles.link}>- Ifome</Link>
+            <Link href="/camera" style={styles.link}>- Câmera</Link>
             </View>
         </View>
     );
