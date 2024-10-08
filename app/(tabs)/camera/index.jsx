@@ -3,6 +3,7 @@ import { View, StyleSheet, Text, Image, Button, Alert } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import * as MediaLibrary from "expo-media-library"; 
 import { BarCodeScanner } from 'expo-barcode-scanner';
+import { Linking } from 'react-native';
 
 export default function Camera() {
     const [permissao, pedirPermissao] = useCameraPermissions();
@@ -11,7 +12,7 @@ export default function Camera() {
     const [ladoCamera, setLadoCamera] = useState('back');
     const [permissaoSalvar, pedirPermissaoSalvar] = MediaLibrary.usePermissions();
     const [scanear, setScanear] = useState(false);
-    const [codigoScaneado, setCodigoScaneado] = useState(null);
+    const [zoom, setZoom] = useState(0);
 
     if (!permissao) {
         return <View />;
@@ -49,31 +50,62 @@ export default function Camera() {
         }
     };
 
-    const handleBarCodeScanned = ({ type, data }) => {
-        setCodigoScaneado(data);
+    const descartarFoto = () => {
+        setFoto(null);
+    };
+
+    const handleBarCodeScanned = async ({ type, data }) => {
         setScanear(false);
-        Alert.alert('Código de barras escaneado!', `Tipo: ${type}\nCódigo: ${data}`);
+        const supported = await Linking.canOpenURL(data);
+        if (supported) {
+            await Linking.openURL(data);
+        } else {
+            Alert.alert("Não foi possível abrir o link.");
+        }
+    };
+
+    const aumentarZoom = () => {
+        if (zoom < 1) {
+            setZoom(zoom + 0.1);
+        }
+    };
+
+    const diminuirZoom = () => {
+        if (zoom > 0) {
+            setZoom(zoom - 0.1);
+        }
     };
 
     return (
         <View style={styles.container}>
             {foto ? (
-                <View>
+                <View style={styles.previewContainer}>
                     <Image style={styles.image} source={{ uri: foto.uri }} />
-                    <Button title='descartar imagem' onPress={() => setFoto(null)} />
-                    <Button title='salvar foto' onPress={salvarFoto} />
+                    <View style={styles.buttonContainer}>
+                        <Button title='descartar imagem' onPress={descartarFoto} />
+                        <Button title='salvar foto' onPress={salvarFoto} />
+                    </View>
                 </View>
             ) : scanear ? (
                 <BarCodeScanner
-                    onBarCodeScanned={codigoScaneado ? undefined : handleBarCodeScanned}
+                    onBarCodeScanned={handleBarCodeScanned}
                     style={StyleSheet.absoluteFillObject}
                 />
             ) : (
-                <CameraView style={styles.camera} facing={ladoCamera} ref={cameraRef}>
+                <CameraView 
+                    style={styles.camera} 
+                    facing={ladoCamera} 
+                    ref={cameraRef} 
+                    zoom={zoom}
+                >
                     <View style={styles.botaosalvar}>
                         <Button title="tirar foto" onPress={tirarFoto} />
                         <Button title="trocar lado" onPress={inverterLadoCamera} />
                         <Button title="escaneador de código" onPress={() => setScanear(true)} />
+                        <View style={styles.zoomContainer}>
+                            <Button title="+" onPress={aumentarZoom} />
+                            <Button title="-" onPress={diminuirZoom} />
+                        </View>
                     </View>
                 </CameraView>
             )}
@@ -92,11 +124,28 @@ const styles = StyleSheet.create({
     camera: {
         flex: 1,
     },
+    previewContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        marginBottom: 20,
+        width: '100%',
+    },
     botaosalvar: {
         flex: 1,
         justifyContent: 'flex-end',
         alignItems: 'center',
         marginBottom: 20,
+    },
+    zoomContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        marginVertical: 10,
+        width: '50%',
     },
     image: {
         width: '100%',
