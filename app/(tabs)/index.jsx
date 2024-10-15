@@ -13,6 +13,7 @@ export default function Page() {
             <Link href="/teladelogin" style={styles.link}>- Tela Login</Link>
             <Link href="/ifome" style={styles.link}>- Ifome</Link>
             <Link href="/camera" style={styles.link}>- Câmera</Link>
+            <Link href="/memorias" style={styles.link}>- Memories</Link>
             </View>
         </View>
     );
