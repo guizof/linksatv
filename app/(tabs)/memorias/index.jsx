@@ -4,6 +4,7 @@ import {SafeAreaView,StyleSheet,View,TextInput,Button,FlatList,Image,Text,} from
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 
+
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -83,7 +84,6 @@ const App = () => {
             </View>
           )}
         />
-        <Button title="Adicionar Memória" onPress={addMemory} />
       </View>
       <View style={styles.memoryFormContainer}>
         <TextInput
